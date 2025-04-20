@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 05-insert-role
+      author: oleksa
+      changes:
+        - sql:
+            dbms: mysql
+            comment: "Insert roles"
+            sql: |
+              insert into roles(id, name) values (1, 'ROLE_CUSTOMER');
+              insert into roles(id, name) values (2, 'ROLE_MANAGER');
