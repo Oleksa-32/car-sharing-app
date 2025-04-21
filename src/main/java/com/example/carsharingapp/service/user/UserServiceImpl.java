@@ -1,5 +1,7 @@
 package com.example.carsharingapp.service.user;
 
+import com.example.carsharingapp.dto.user.UpdateUserProfileRequestDto;
+import com.example.carsharingapp.dto.user.UpdateUserRoleRequestDto;
 import com.example.carsharingapp.dto.user.UserRegistrationRequestDto;
 import com.example.carsharingapp.dto.user.UserResponseDto;
 import com.example.carsharingapp.exception.RegistrationException;
@@ -43,5 +45,32 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserResponseDto updateRole(Long userId, UpdateUserRoleRequestDto requestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("User not found: " + userId));
+        Role role = roleRepository.findByName(requestDto.getRole())
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Role not found: " + requestDto.getRole()));
+        user.setRoles(Set.of(role));
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserResponseDto getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserResponseDto updateProfile(String email, UpdateUserProfileRequestDto requestDto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        userMapper.updateProfileFromDto(requestDto, user);
+        return userMapper.toDto(userRepository.save(user));
     }
 }
