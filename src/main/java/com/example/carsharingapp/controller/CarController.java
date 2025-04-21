@@ -27,26 +27,26 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public CarDto save(@RequestBody @Valid CreateCarRequestDto requestDto) {
         return carService.save(requestDto);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_CUSTOMER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
     public CarDto getCarById(@PathVariable Long id) {
         return carService.getCarById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_MANAGER', 'ROLE_CUSTOMER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
     public Page<CarDto> findAll(Pageable pageable) {
         return carService.findAll(pageable);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     public CarDto updateCar(@PathVariable Long id,
                             @RequestBody @Valid UpdateCarRequestDto updateCarRequestDto) {
         return carService.updateCar(id, updateCarRequestDto);
@@ -54,7 +54,7 @@ public class CarController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('MANAGER')")
     public void deleteCar(@PathVariable Long id) {
         carService.deleteCar(id);
     }
