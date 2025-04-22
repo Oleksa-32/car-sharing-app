@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 07-insert-roles-data
+      author: oleksa
+      changes:
+        - sql:
+            dbms: mysql
+            comment: "Insert default users roles"
+            sql: |
+              insert into users_roles(user_id, role_id) values (1, 1);
+              insert into users_roles(user_id, role_id) values (2, 2);
