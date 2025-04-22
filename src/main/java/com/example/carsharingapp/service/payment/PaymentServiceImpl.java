@@ -4,6 +4,7 @@ import com.example.carsharingapp.dto.payment.CreatePaymentRequestDto;
 import com.example.carsharingapp.dto.payment.PaymentResponseDto;
 import com.example.carsharingapp.dto.payment.PaymentStatus;
 import com.example.carsharingapp.dto.payment.PaymentType;
+import com.example.carsharingapp.mapper.PaymentMapper;
 import com.example.carsharingapp.model.Payment;
 import com.example.carsharingapp.model.Rental;
 import com.example.carsharingapp.repository.PaymentRepository;
@@ -25,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Transactional
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
+    private final PaymentMapper paymentMapper;
     private final RentalRepository rentalRepository;
     private final Map<String, CheckoutStrategy> strategies;
 
@@ -91,13 +93,9 @@ public class PaymentServiceImpl implements PaymentService {
         p.setCurrency("usd");
         p.setType(dto.getType());
         p.setStatus(PaymentStatus.OPEN);
-        paymentRepository.save(p);
 
         //return to client
-        PaymentResponseDto resp = new PaymentResponseDto();
-        resp.setSessionId(session.getId());
-        resp.setSessionUrl(session.getUrl());
-        return resp;
+        return paymentMapper.toDto(paymentRepository.save(p));
     }
 
     @Transactional
