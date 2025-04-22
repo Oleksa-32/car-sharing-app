@@ -3,7 +3,6 @@ package com.example.carsharingapp.strategy;
 import com.example.carsharingapp.dto.payment.CreatePaymentRequestDto;
 import com.example.carsharingapp.model.Rental;
 import com.example.carsharingapp.repository.RentalRepository;
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FineCheckoutStrategy implements CheckoutStrategy {
     private final RentalRepository rentalRepository;
-    private final double multiplier = Double.parseDouble(Dotenv.load().get("FINE_MULTIPLIER"));
+    private final double multiplier = 1.5;
 
     @Override
     public long calculateAmount(CreatePaymentRequestDto dto) {
