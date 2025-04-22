@@ -9,6 +9,7 @@ import com.example.carsharingapp.model.Payment;
 import com.example.carsharingapp.model.Rental;
 import com.example.carsharingapp.repository.PaymentRepository;
 import com.example.carsharingapp.repository.RentalRepository;
+import com.example.carsharingapp.service.notification.NotificationService;
 import com.example.carsharingapp.strategy.CheckoutStrategy;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -29,8 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final RentalRepository rentalRepository;
     private final Map<String, CheckoutStrategy> strategies;
+    private final NotificationService notificationService;
 
-    @Transactional(readOnly = true)
     public List<Payment> getPaymentsByUser(Long userId) {
         return paymentRepository.findByRentalUserId(userId);
     }
@@ -98,7 +99,6 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentMapper.toDto(paymentRepository.save(p));
     }
 
-    @Transactional
     public void handleSuccess(String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
         if ("paid".equals(session.getPaymentStatus())) {
@@ -106,10 +106,26 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow();
             p.setStatus(PaymentStatus.PAID);
             paymentRepository.save(p);
+
+            Rental rental = p.getRental();
+            StringBuilder msg = new StringBuilder();
+            msg.append("💰 *Payment Received*\n")
+                    .append("• *Payment ID:* ").append(p.getId()).append("\n")
+                    .append("• *Rental ID:* ").append(rental.getId()).append("\n")
+                    .append("• *Type:* ").append(p.getType()).append("\n")
+                    .append("• *Amount:* ").append(p.getAmount() / 100.0)
+                    .append(" ").append(p.getCurrency().toUpperCase()).append("\n")
+                    .append("• *User:* ")
+                    .append(rental.getUser().getFirstName())
+                    .append(" ").append(rental.getUser().getLastName()).append("\n")
+                    .append("• *Car:* ")
+                    .append(rental.getCar().getBrand())
+                    .append(" ").append(rental.getCar().getModel());
+
+            notificationService.sendNotification(msg.toString());
         }
     }
 
-    @Transactional
     public void handleCancel(String sessionId) {
         Payment p = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow();
