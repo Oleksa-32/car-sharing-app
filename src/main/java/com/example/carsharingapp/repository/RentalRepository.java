@@ -1,7 +1,6 @@
 package com.example.carsharingapp.repository;
 
 import com.example.carsharingapp.model.Rental;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
