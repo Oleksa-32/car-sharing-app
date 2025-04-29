@@ -11,11 +11,13 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "cars")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
