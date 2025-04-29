@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -19,6 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "rentals")
 @Getter
 @Setter
+@Accessors(chain = true)
 @SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id=?")
 @SQLRestriction("is_deleted = false")
 public class Rental {
@@ -38,5 +40,4 @@ public class Rental {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id ", nullable = false)
     private User user;
-
 }
