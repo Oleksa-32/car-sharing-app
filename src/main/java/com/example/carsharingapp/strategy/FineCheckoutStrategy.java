@@ -8,13 +8,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component("FINE")
 @RequiredArgsConstructor
 public class FineCheckoutStrategy implements CheckoutStrategy {
     private final RentalRepository rentalRepository;
-    private final double multiplier = 1.5;
+    @Value("${FINE_MULTIPLIER}")
+    private double multiplier;
 
     @Override
     public long calculateAmount(CreatePaymentRequestDto dto) {

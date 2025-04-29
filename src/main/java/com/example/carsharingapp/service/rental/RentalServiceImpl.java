@@ -9,6 +9,7 @@ import com.example.carsharingapp.model.User;
 import com.example.carsharingapp.repository.CarRepository;
 import com.example.carsharingapp.repository.RentalRepository;
 import com.example.carsharingapp.repository.UserRepository;
+import com.example.carsharingapp.service.notification.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ public class RentalServiceImpl implements RentalService {
     private final UserRepository userRepository;
     private final RentalMapper rentalMapper;
     private final CarRepository carRepository;
+    private final NotificationService notificationService;
 
     @Override
     public RentalDto save(CreateRentalRequestDto requestDto) {
@@ -52,6 +54,20 @@ public class RentalServiceImpl implements RentalService {
         rental.setActualReturnDate(null);
 
         Rental saved = rentalRepository.save(rental);
+        StringBuilder msg = new StringBuilder();
+        msg.append("🚗 *New Rental Created!*\n")
+                .append("• *Rental ID:* ").append(saved.getId()).append("\n")
+                .append("• *User:* ")
+                .append(user.getFirstName()).append(" ").append(user.getLastName())
+                .append(" (").append(user.getEmail()).append(")\n")
+                .append("• *Car:* ")
+                .append(car.getBrand()).append(" ").append(car.getModel())
+                .append(" [Type: ").append(car.getType()).append("]\n")
+                .append("• *From:* ").append(saved.getRentalDate()).append("\n")
+                .append("• *To:*   ").append(saved.getReturnDate()).append("\n")
+                .append("• *Remaining inventory:* ").append(car.getInventory());
+
+        notificationService.sendNotification(msg.toString());
         return rentalMapper.toDto(saved);
     }
 
@@ -81,13 +97,29 @@ public class RentalServiceImpl implements RentalService {
         if (rental.getActualReturnDate() != null) {
             throw new IllegalStateException("Rental already returned: " + rentalId);
         }
-        rental.setActualReturnDate(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        rental.setActualReturnDate(now);
 
         Car car = rental.getCar();
         car.setInventory(car.getInventory() + 1);
         carRepository.save(car);
 
         Rental saved = rentalRepository.save(rental);
+        StringBuilder msg = new StringBuilder();
+        msg.append("🔄 *Rental Returned*\n")
+                .append("• *Rental ID:* ").append(saved.getId()).append("\n")
+                .append("• *User:* ")
+                .append(saved.getUser().getFirstName())
+                .append(" ").append(saved.getUser().getLastName())
+                .append("\n")
+                .append("• *Car:* ")
+                .append(saved.getCar().getBrand())
+                .append(" ").append(saved.getCar().getModel())
+                .append("\n")
+                .append("• *Returned at:* ").append(now).append("\n")
+                .append("• *Inventory:* ").append(car.getInventory());
+
+        notificationService.sendNotification(msg.toString());
         return rentalMapper.toDto(saved);
     }
 }
