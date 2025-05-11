@@ -40,10 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDto createSession(CreatePaymentRequestDto dto,
                                             UriComponentsBuilder uriBuilder)
             throws StripeException {
-        //calculate total
         long amount = strategies.get(dto.getType().name()).calculateAmount(dto);
-
-        //build redirect URLs
         String successUrl = uriBuilder.path("/payments/success")
                 .queryParam("session_id", "{CHECKOUT_SESSION_ID}")
                 .build().toUriString();
@@ -51,7 +48,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .queryParam("session_id", "{CHECKOUT_SESSION_ID}")
                 .build().toUriString();
 
-        //create Stripe Checkout session
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
@@ -85,7 +81,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Rental not found: " + dto.getRentalId()));
 
-        //persist Payment record
         Payment p = new Payment();
         p.setRental(rental);
         p.setSessionId(session.getId());
@@ -95,7 +90,6 @@ public class PaymentServiceImpl implements PaymentService {
         p.setType(dto.getType());
         p.setStatus(PaymentStatus.OPEN);
 
-        //return to client
         return paymentMapper.toDto(paymentRepository.save(p));
     }
 
@@ -121,7 +115,6 @@ public class PaymentServiceImpl implements PaymentService {
                     .append("• *Car:* ")
                     .append(rental.getCar().getBrand())
                     .append(" ").append(rental.getCar().getModel());
-
             notificationService.sendNotification(msg.toString());
         }
     }

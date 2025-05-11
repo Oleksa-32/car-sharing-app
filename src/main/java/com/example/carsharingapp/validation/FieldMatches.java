@@ -12,7 +12,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FieldMatches {
     String message() default "Wrong repeat password";
+    Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     String field();
     String fieldMatch();
+
+    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface List {
+        FieldMatches[] value();
+    }
 }

@@ -14,7 +14,6 @@ public class CreateRentalRequestDto {
     private Long userId;
     @NotNull
     private LocalDateTime rentalDate;
-
     @NotNull
     private LocalDateTime returnDate;
 }
