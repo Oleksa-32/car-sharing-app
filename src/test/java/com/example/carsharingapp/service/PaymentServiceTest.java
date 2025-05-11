@@ -92,7 +92,6 @@ class PaymentServiceTest {
         when(stripeSession.getUrl()).thenReturn("http://url");
 
         try (MockedStatic<Session> sessionStatic = mockStatic(Session.class)) {
-            // ✅ This avoids the ambiguity by specifying the type explicitly
             sessionStatic.when(() -> Session.create(any(SessionCreateParams.class)))
                     .thenReturn(stripeSession);
 

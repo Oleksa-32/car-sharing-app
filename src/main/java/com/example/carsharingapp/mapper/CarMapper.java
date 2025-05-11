@@ -8,7 +8,6 @@ import com.example.carsharingapp.model.Car;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
 
 @Mapper(config = MapperConfig.class)
 public interface CarMapper {
@@ -16,10 +15,6 @@ public interface CarMapper {
 
     Car toModel(CreateCarRequestDto requestDto);
 
-    @Mappings({
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "dailyFee", source = "dailyFee"),
-            @Mapping(target = "inventory", source = "inventory")
-    })
+    @Mapping(target = "id", ignore = true)
     void updateCarFromDto(UpdateCarRequestDto requestDto, @MappingTarget Car car);
 }

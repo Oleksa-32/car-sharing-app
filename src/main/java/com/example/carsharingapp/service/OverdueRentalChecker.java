@@ -19,17 +19,14 @@ public class OverdueRentalChecker {
     private final RentalRepository rentalRepository;
     private final NotificationService notificationService;
 
-    // run every day at 8am server time
     @Scheduled(cron = "0 0 8 * * *")
     public void reportOverdues() {
         LocalDateTime cutoff = LocalDate.now()
                 .atStartOfDay()
                 .plusDays(1);
-
         List<Rental> overdue = rentalRepository.findOverdueRentals(cutoff);
 
         if (overdue.isEmpty()) {
-            // 3a. none overdue → single “all clear” message
             notificationService.sendNotification("✅ No rentals overdue today!");
         } else {
             for (Rental r : overdue) {
@@ -46,7 +43,6 @@ public class OverdueRentalChecker {
                         .append("• *Days overdue:* ")
                         .append(ChronoUnit.DAYS.between(r.getReturnDate(), LocalDateTime.now()))
                         .toString();
-
                 notificationService.sendNotification(text);
             }
         }

@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 public class UpdateUserProfileRequestDto {
     @Size(max = 50)
     private String firstName;
-
     @Size(max = 50)
     private String lastName;
 }

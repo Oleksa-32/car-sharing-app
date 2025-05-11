@@ -7,7 +7,6 @@ import lombok.Data;
 public class CreatePaymentRequestDto {
     @NotNull
     private Long rentalId;
-
     @NotNull
     private PaymentType type;
 }
