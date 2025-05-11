@@ -1,6 +1,5 @@
 package com.example.carsharingapp.repository;
 
-import com.example.carsharingapp.dto.payment.PaymentResponseDto;
 import com.example.carsharingapp.model.Payment;
 import java.util.List;
 import java.util.Optional;
