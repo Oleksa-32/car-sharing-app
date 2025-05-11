@@ -37,7 +37,8 @@ public class RentalServiceImpl implements RentalService {
         }
 
         car.setInventory(car.getInventory() - 1);
-        return carRepository.save(car);
+        carRepository.save(car);
+        return car;
     }
 
     private Rental buildRental(CreateRentalRequestDto dto, Car car, User user) {
@@ -60,6 +61,9 @@ public class RentalServiceImpl implements RentalService {
                         new EntityNotFoundException("User not found: " + requestDto.getUserId()));
 
         Rental rental = buildRental(requestDto, car, user);
+
+        rental.setCar(car);
+        rental.setUser(user);
 
         Rental saved = rentalRepository.save(rental);
         StringBuilder msg = new StringBuilder();

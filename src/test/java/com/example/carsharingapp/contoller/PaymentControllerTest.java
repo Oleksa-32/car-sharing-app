@@ -87,25 +87,25 @@ class PaymentControllerTest {
         }
     }
 
-//    @Test
-//    @WithMockUser(roles = "CUSTOMER")
-//    @DisplayName("GET /payments?user_id=1 → list of sessions")
-//    void getPaymentsByUser_ReturnsList() throws Exception {
-//        Long userId = 1L;
-//        Payment p = TestDataUtil.payment(TestDataUtil.rental());
-//        List<Payment> payments = List.of(p);
-//
-//        when(paymentService.getPaymentsByUser(userId))
-//                .thenReturn(payments);
-//
-//        mockMvc.perform(get("/payments")
-//                        .param("user_id", userId.toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].sessionId").value(p.getSessionId()))
-//                .andExpect(jsonPath("$[0].sessionUrl").value(p.getSessionUrl()));
-//
-//        verify(paymentService).getPaymentsByUser(userId);
-//    }
+    @Test
+    @WithMockUser(roles = "CUSTOMER")
+    @DisplayName("GET /payments?user_id=1 → list of sessions")
+    void getPaymentsByUser_ReturnsList() throws Exception {
+        Long userId = 1L;
+        Payment p = TestDataUtil.payment(TestDataUtil.rental());
+        List<Payment> payments = List.of(p);
+
+        when(paymentService.getPaymentsByUser(userId))
+                .thenReturn(payments);
+
+        mockMvc.perform(get("/payments")
+                        .param("user_id", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].sessionId").value(p.getSessionId()))
+                .andExpect(jsonPath("$[0].sessionUrl").value(p.getSessionUrl()));
+
+        verify(paymentService).getPaymentsByUser(userId);
+    }
 
     @Test
     @WithMockUser(roles = "CUSTOMER")

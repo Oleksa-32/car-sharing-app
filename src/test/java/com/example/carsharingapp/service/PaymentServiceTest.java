@@ -59,21 +59,21 @@ class PaymentServiceTest {
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
-//    @Test
-//    @DisplayName("getPaymentsByUser returns list of payments from repository")
-//    void getPaymentsByUser_returnsList() {
-//        Long userId = 1L;
-//        Rental rental = TestDataUtil.rental();
-//        Payment payment = TestDataUtil.payment(rental);
-//        List<Payment> payments = List.of(payment);
-//
-//        when(paymentRepository.findByRentalUserId(userId)).thenReturn(payments);
-//
-//        List<Payment> result = paymentService.getPaymentsByUser(userId);
-//
-//        assertThat(result).isEqualTo(payments);
-//        verify(paymentRepository).findByRentalUserId(userId);
-//    }
+    @Test
+    @DisplayName("getPaymentsByUser returns list of payments from repository")
+    void getPaymentsByUser_returnsList() {
+        Long userId = 1L;
+        Rental rental = TestDataUtil.rental();
+        Payment payment = TestDataUtil.payment(rental);
+        List<Payment> payments = List.of(payment);
+
+        when(paymentRepository.findByRentalUserId(userId)).thenReturn(payments);
+
+        List<Payment> result = paymentService.getPaymentsByUser(userId);
+
+        assertThat(result).isEqualTo(payments);
+        verify(paymentRepository).findByRentalUserId(userId);
+    }
 
     @Test
     @DisplayName("createSession builds Stripe session, persists payment and returns dto")
@@ -92,7 +92,6 @@ class PaymentServiceTest {
         when(stripeSession.getUrl()).thenReturn("http://url");
 
         try (MockedStatic<Session> sessionStatic = mockStatic(Session.class)) {
-            // ✅ This avoids the ambiguity by specifying the type explicitly
             sessionStatic.when(() -> Session.create(any(SessionCreateParams.class)))
                     .thenReturn(stripeSession);
 
