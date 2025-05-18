@@ -29,19 +29,20 @@ public class OverdueRentalChecker {
         if (overdue.isEmpty()) {
             notificationService.sendNotification("✅ No rentals overdue today!");
         } else {
-            for (Rental r : overdue) {
+            for (Rental rental : overdue) {
                 String text = new StringBuilder()
                         .append("⏰ *Overdue Rental Alert*\n")
-                        .append("• *Rental ID:* ").append(r.getId()).append("\n")
-                        .append("• *Due on:* ").append(r.getReturnDate()).append("\n")
+                        .append("• *Rental ID:* ").append(rental.getId()).append("\n")
+                        .append("• *Due on:* ").append(rental.getReturnDate()).append("\n")
                         .append("• *User:* ")
-                        .append(r.getUser().getFirstName())
-                        .append(" ").append(r.getUser().getLastName()).append("\n")
+                        .append(rental.getUser().getFirstName())
+                        .append(" ").append(rental.getUser().getLastName()).append("\n")
                         .append("• *Car:* ")
-                        .append(r.getCar().getBrand())
-                        .append(" ").append(r.getCar().getModel()).append("\n")
+                        .append(rental.getCar().getBrand())
+                        .append(" ").append(rental.getCar().getModel()).append("\n")
                         .append("• *Days overdue:* ")
-                        .append(ChronoUnit.DAYS.between(r.getReturnDate(), LocalDateTime.now()))
+                        .append(ChronoUnit.DAYS.between(rental.getReturnDate(),
+                                LocalDateTime.now()))
                         .toString();
                 notificationService.sendNotification(text);
             }
