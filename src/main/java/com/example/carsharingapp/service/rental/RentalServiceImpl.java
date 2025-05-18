@@ -28,29 +28,6 @@ public class RentalServiceImpl implements RentalService {
     private final CarRepository carRepository;
     private final NotificationService notificationService;
 
-    private Car fetchAndReserveCar(Long carId) {
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new EntityNotFoundException("Car not found: " + carId));
-
-        if (car.getInventory() <= 0) {
-            throw new IllegalStateException("No inventory for car " + carId);
-        }
-
-        car.setInventory(car.getInventory() - 1);
-        carRepository.save(car);
-        return car;
-    }
-
-    private Rental buildRental(CreateRentalRequestDto dto, Car car, User user) {
-        Rental rental = rentalMapper.toModel(dto);
-        rental.setCar(car);
-        rental.setUser(user);
-        rental.setRentalDate(dto.getRentalDate());
-        rental.setReturnDate(dto.getReturnDate());
-        rental.setActualReturnDate(null);
-        return rental;
-    }
-
     @Override
     public RentalDto save(CreateRentalRequestDto requestDto) {
 
@@ -133,5 +110,28 @@ public class RentalServiceImpl implements RentalService {
         return rentals.stream()
                 .map(rentalMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private Car fetchAndReserveCar(Long carId) {
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new EntityNotFoundException("Car not found: " + carId));
+
+        if (car.getInventory() <= 0) {
+            throw new IllegalStateException("No inventory for car " + carId);
+        }
+
+        car.setInventory(car.getInventory() - 1);
+        carRepository.save(car);
+        return car;
+    }
+
+    private Rental buildRental(CreateRentalRequestDto dto, Car car, User user) {
+        Rental rental = rentalMapper.toModel(dto);
+        rental.setCar(car);
+        rental.setUser(user);
+        rental.setRentalDate(dto.getRentalDate());
+        rental.setReturnDate(dto.getReturnDate());
+        rental.setActualReturnDate(null);
+        return rental;
     }
 }

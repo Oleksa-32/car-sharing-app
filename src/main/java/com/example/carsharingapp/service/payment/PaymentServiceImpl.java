@@ -81,34 +81,34 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Rental not found: " + dto.getRentalId()));
 
-        Payment p = new Payment();
-        p.setRental(rental);
-        p.setSessionId(session.getId());
-        p.setSessionUrl(session.getUrl());
-        p.setAmount(amount);
-        p.setCurrency("usd");
-        p.setType(dto.getType());
-        p.setStatus(PaymentStatus.OPEN);
+        Payment payment = new Payment();
+        payment.setRental(rental);
+        payment.setSessionId(session.getId());
+        payment.setSessionUrl(session.getUrl());
+        payment.setAmount(amount);
+        payment.setCurrency("usd");
+        payment.setType(dto.getType());
+        payment.setStatus(PaymentStatus.OPEN);
 
-        return paymentMapper.toDto(paymentRepository.save(p));
+        return paymentMapper.toDto(paymentRepository.save(payment));
     }
 
     public void handleSuccess(String sessionId) throws StripeException {
         Session session = Session.retrieve(sessionId);
         if ("paid".equals(session.getPaymentStatus())) {
-            Payment p = paymentRepository.findBySessionId(sessionId)
+            Payment payment = paymentRepository.findBySessionId(sessionId)
                     .orElseThrow();
-            p.setStatus(PaymentStatus.PAID);
-            paymentRepository.save(p);
+            payment.setStatus(PaymentStatus.PAID);
+            paymentRepository.save(payment);
 
-            Rental rental = p.getRental();
+            Rental rental = payment.getRental();
             StringBuilder msg = new StringBuilder();
             msg.append("💰 *Payment Received*\n")
-                    .append("• *Payment ID:* ").append(p.getId()).append("\n")
+                    .append("• *Payment ID:* ").append(payment.getId()).append("\n")
                     .append("• *Rental ID:* ").append(rental.getId()).append("\n")
-                    .append("• *Type:* ").append(p.getType()).append("\n")
-                    .append("• *Amount:* ").append(p.getAmount() / 100.0)
-                    .append(" ").append(p.getCurrency().toUpperCase()).append("\n")
+                    .append("• *Type:* ").append(payment.getType()).append("\n")
+                    .append("• *Amount:* ").append(payment.getAmount() / 100.0)
+                    .append(" ").append(payment.getCurrency().toUpperCase()).append("\n")
                     .append("• *User:* ")
                     .append(rental.getUser().getFirstName())
                     .append(" ").append(rental.getUser().getLastName()).append("\n")
@@ -120,9 +120,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public void handleCancel(String sessionId) {
-        Payment p = paymentRepository.findBySessionId(sessionId)
+        Payment payment = paymentRepository.findBySessionId(sessionId)
                 .orElseThrow();
-        p.setStatus(PaymentStatus.CANCELED);
-        paymentRepository.save(p);
+        payment.setStatus(PaymentStatus.CANCELED);
+        paymentRepository.save(payment);
     }
 }
